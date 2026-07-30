@@ -1,0 +1,100 @@
+/* Reset básico */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #f4f6f8;
+    color: #2b2d42;
+    padding: 30px 20px;
+}
+
+main {
+    max-width: 600px;
+    margin: 0 auto 20px auto;
+    text-align: center;
+}
+
+h1 {
+    font-size: 28px;
+    color: #1a1a2e;
+}
+
+/* Formulario */
+#form-gasto {
+    max-width: 600px;
+    margin: 0 auto 30px auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#form-gasto input {
+    flex: 1;
+    min-width: 120px;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+#form-gasto button {
+    background-color: #0f3460;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#form-gasto button:hover {
+    background-color: #16447e;
+}
+
+/* Lista de gastos */
+.contenedor {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#lista-gastos {
+    list-style: none;
+}
+
+#lista-gastos li {
+    background-color: #ffffff;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+#lista-gastos li button {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    color: white;
+}
+
+#lista-gastos li button:first-of-type {
+    background-color: #4a90d9;
+}
+
+#lista-gastos li button:last-of-type {
+    background-color: #d9534f;
+}
