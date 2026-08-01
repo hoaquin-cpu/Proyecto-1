@@ -75,9 +75,9 @@ Deberías ver el mensaje `Servidor corriendo en http://localhost:3000`.
 
 ##  Capturas de pantalla
 
-![Programa con 2 gastos cargados](screenshot\Gastos.png)
+![Programa con 2 gastos cargados](screenshot/Gastos.png)
 
-![Aca se ha eliminado un gasto](screenshot\GastoElimnado.png)
+![Aca se ha eliminado un gasto](screenshot/GastoEliminado.png)
 
 ##  Notas
 
