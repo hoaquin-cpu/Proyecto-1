@@ -1,17 +1,22 @@
-const { DatabaseSync } = require('node:sqlite');
-const db = new DatabaseSync('gastos.db');
+const { Pool } = require('pg');
 
-db.exec(`
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+});
 
+pool.query(`
     CREATE TABLE IF NOT EXISTS gastos (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         descripcion TEXT NOT NULL,
         monto REAL NOT NULL,
         categoria TEXT,
         fecha TEXT
     )
+
 `)
+    .then(() => console.log("Base de datos y tabla creadas correctamente"))
+    .catch(error => console.error("Error creando la tabla: ", error));
 
-console.log("Base de datos y tablas creadas correctamente");
 
-module.exports = db;
+module.exports = pool;
