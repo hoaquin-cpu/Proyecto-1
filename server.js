@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const db = require('./db.js');
+const pool = require('./db.js');
 
 const app = express();
 
@@ -14,56 +14,69 @@ app.use((req, res, next) => {
 
 const PUERTO = 3000;
 
-app.get('/gastos', (req,res) => {
-    const consulta = db.prepare('SELECT * FROM gastos');
-    const gastos = consulta.all();
-    res.json(gastos);
-})
-
 app.use(express.json());
 
-app.post('/gastos', (req, res) => {
-    const { descripcion, monto, categoria, fecha} = req.body;
-
-    const insertar = db.prepare(
-        'INSERT INTO gastos (descripcion, monto, categoria, fecha) VALUES (?, ?, ?, ?)'
-    );
-
-    const resultado = insertar.run(descripcion, monto, categoria, fecha);
-    
-    res.status(201).json({ id: resultado.lastInsertRowid, descripcion, monto, categoria, fecha});
-
-});
-
-app.put('/gastos/:id', (req, res) => {
-    const {id} = req.params;
-    const {descripcion, monto, categoria, fecha} = req.body;
-
-    const actualizar = db.prepare(
-        'UPDATE gastos SET descripcion = ?, monto = ?, categoria = ?, fecha = ? WHERE id = ?' 
-    )
-    const resultado = actualizar.run(descripcion, monto, categoria, fecha, id);
-
-    if(resultado.changes === 0) {
-        return res.status(404).json({ error: 'Gasto no encontrado' });
+app.get('/gastos', async (req, res) => {
+    try {
+        const resultado = await pool.query('SELECT * FROM gastos');
+        res.json(resultado.rows);
     }
-
-    res.json({ id: Number(id), descripcion, monto, categoria, fecha });
+    catch (error) {
+        res.status(500).json({ error : error.message });
+    }
 })
 
-app.delete('/gastos/:id', (req, res) => {
-    const {id} = req.params;
+app.post('/gastos', async (req, res) => {
+    try {
+        const { descripcion, monto, categoria, fecha } = req.body;
 
-    const borrar = db.prepare('DELETE FROM gastos WHERE id = ?');
-    const resultado = borrar.run(id);
+        const resultado = await pool.query(
+            'INSERT INTO gastos (descripcion, monto, categoria, fecha) VALUES ($1, $2, $3, $4) RETURNING *',
+            [descripcion, monto, categoria, fecha]
+        );
 
-    if (resultado.changes === 0) {
-        return res.status(404).json({ error: 'Gasto no encontrado' });
+        res.status(201).json(resultado.rows[0]);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
+});
 
-    res.status(204).send();
+app.put('/gastos/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { descripcion, monto, categoria, fecha } = req.body;
+
+        const resultado = await pool.query(
+            'UPDATE gastos SET descripcion = $1, monto = $2, categoria = $3, fecha = $4 WHERE id = $5 RETURNING *',
+            [descripcion, monto, categoria, fecha, id]
+        );
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({ error: 'Gasto no encontrado' });
+        }
+
+        res.json(resultado.rows[0]);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+})
+
+app.delete('/gastos/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const resultado = await pool.query( 'DELETE FROM gastos WHERE id = $1 RETURNING *', [id]);
+
+        if (resultado.rowCount === 0) {
+            return res.status(404).json({ error: 'Gasto no encontrado' });
+        }
+
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 app.listen(PUERTO, () => {
-    console.log(`Servidor corriendo en http://localhost:${PUERTO}`);
+    console.log(` Servidor corriendo en http://localhost:${PUERTO}`);
 })
